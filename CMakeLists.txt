@@ -1,4 +1,7 @@
 cmake_minimum_required(VERSION 3.23)
+
+include(arm-gcc-toolchain.cmake) # Must be included before 'project' clause
+
 project(cmake_qemu_testing_blog C CXX ASM)
 
 set(CMAKE_C_STANDARD 17)
@@ -18,13 +21,9 @@ set(GCC_FP_SWITCHES -mfloat-abi=hard;-mfpu=fpv4-sp-d16)
 #  End of CPU type  #
 #####################
 
-include(FetchContent)
-
-FetchContent_Declare(cmsis URL https://github.com/ARM-software/CMSIS_5/releases/download/5.9.0/ARM.CMSIS.5.9.0.pack)
-FetchContent_Populate(cmsis)
-
-add_compile_options(${GCC_FP_SWITCHES})
-add_link_options(${GCC_FP_SWITCHES})
+add_compile_options(-mcpu=${GCC_MCPU} ${GCC_FP_SWITCHES})
+add_compile_options(-ffunction-sections -fdata-sections -fno-common -fmessage-length=0)
+add_link_options(-mcpu=${GCC_MCPU} ${GCC_FP_SWITCHES} -Wl,-u,_printf_float)
 
 if ("${CMAKE_BUILD_TYPE}" STREQUAL "Release")
     message(STATUS "Maximum optimization for speed")
@@ -40,25 +39,7 @@ else ()
     add_compile_options(-Og -g3)
 endif ()
 
-add_compile_options(-mcpu=${GCC_MCPU})
-add_compile_options(-ffunction-sections -fdata-sections -fno-common -fmessage-length=0)
-add_link_options(-mcpu=${GCC_MCPU})
+include(QemuArmTesting/QemuArmTesting.cmake)
 
-add_link_options(-Wl,-u,_printf_float)
+add_qemu_test(factorial_test test/factorial-test.c)
 
-add_executable(test_firmware main.c)
-
-target_compile_definitions(test_firmware PRIVATE ${CMSIS_DEVICE_OPT})
-set_property(SOURCE main.c APPEND_STRING PROPERTY COMPILE_FLAGS "-include \"${CMSIS_DEVICE_OPT}.h\"")
-target_include_directories(test_firmware PRIVATE
-        ${cmsis_SOURCE_DIR}/Device/ARM/${CMSIS_DEVICE}/Include
-        ${cmsis_SOURCE_DIR}/CMSIS/Core/Include
-        )
-set_property(TARGET test_firmware PROPERTY SUFFIX .elf)
-
-target_sources(test_firmware PRIVATE
-        ${cmsis_SOURCE_DIR}/Device/ARM/${CMSIS_DEVICE}/Source/startup_${CMSIS_DEVICE}.c
-        ${cmsis_SOURCE_DIR}//Device/ARM/${CMSIS_DEVICE}/Source/system_${CMSIS_DEVICE}.c)
-target_link_options(test_firmware PRIVATE --specs=rdimon.specs --specs=nano.specs)
-target_link_options(test_firmware PRIVATE -Wl,-gc-sections,--print-memory-usage,-Map=${PROJECT_BINARY_DIR}/${PROJECT_NAME}.map)
-target_link_options(test_firmware PRIVATE -T ${cmsis_SOURCE_DIR}/Device/ARM/${CMSIS_DEVICE}/Source/GCC/gcc_arm.ld)
