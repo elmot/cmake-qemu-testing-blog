@@ -7,7 +7,7 @@
     "configurePresets": [
     {
       "name": "ARM-Debug",
-      "toolchainFile": "cmake/arm-gcc-toolchain.cmake",
+      "toolchainFile": "arm-gcc-toolchain.cmake",
       "generator": "Ninja",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug"
@@ -15,8 +15,7 @@
     },
       {
         "name": "ARM-Release",
-        "toolchainFile": "cmake/arm-gcc-toolchain.cmake",
-        "generator": "Ninja",
+        "inherits": "ARM-Debug",
         "cacheVariables": {
           "CMAKE_BUILD_TYPE": "Release"
         }
