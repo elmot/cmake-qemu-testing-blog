@@ -1,0 +1,25 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 23
+  },
+    "configurePresets": [
+    {
+      "name": "ARM-Debug",
+      "toolchainFile": "cmake/arm-gcc-toolchain.cmake",
+      "generator": "Ninja",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+      {
+        "name": "ARM-Release",
+        "toolchainFile": "cmake/arm-gcc-toolchain.cmake",
+        "generator": "Ninja",
+        "cacheVariables": {
+          "CMAKE_BUILD_TYPE": "Release"
+        }
+      }
+  ]
+}

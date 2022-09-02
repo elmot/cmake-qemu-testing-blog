@@ -1,0 +1,1 @@
+"C:\Program Files\qemu\qemu-system-arm.exe" -machine mps2-an500 -nographic -kernel %1 --semihosting-config enable=on,target=native -icount shift=auto -kernel %1 %2 %3 %4 %5 %6 %7 %8 %9
