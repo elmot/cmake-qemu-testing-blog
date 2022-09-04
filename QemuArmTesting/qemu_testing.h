@@ -4,5 +4,15 @@
 
 #ifndef CMAKE_QEMU_TESTING_BLOG_QEMU_TESTING_H
 #define CMAKE_QEMU_TESTING_BLOG_QEMU_TESTING_H
-extern int test_main(void);
+
+#ifdef __cplusplus
+    extern "C" {
+#endif
+
+    int test_main(void);
+
+#ifdef __cplusplus
+    }
+#endif
+
 #endif //CMAKE_QEMU_TESTING_BLOG_QEMU_TESTING_H
