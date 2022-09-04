@@ -1,16 +1,12 @@
 #include <stdio.h>
 #include "qemu_testing.h"
 
-float factorial(float f) {
-    float result = 1;
-    for (; f > 0; f -= 1.0f) {
-        result *= f;
-    }
-    return result;
-}
+float factorial(float);
 
 int test_main() {
     float f=25.0f;
-    printf("Factorial of %f is %f\n", f, factorial(f));
-    return 0;
+
+    float fFact = factorial(f);
+    printf("Factorial of %f is %f\n", f, fFact);
+    return fFact == 15511209926324736051118080.0f ? 0 : -1;
 }
