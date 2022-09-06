@@ -4,19 +4,31 @@
 /**
  * ARMC[0..85][_DSP][_fpu].h file is externally included via CMake
  */
+
+/**
+ * Semihosting support
+ */
 extern void initialise_monitor_handles(void);
 
+/**
+ * Timing support
+ */
+#define TIMER_TICKS (1000000)
+static volatile uint32_t tickLoopCount = 0;
+
+uint32_t elapsedSysTicks() {
+    __disable_irq();
+    uint32_t loops = tickLoopCount;
+    __enable_irq();
+    return (loops+1) * TIMER_TICKS - SysTick->VAL;
+}
+
 int main() {
-    SysTick->LOAD = 0xFFFFFF;
-    SysTick->VAL = 0;
-    SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk |
-                    //                     SysTick_CTRL_TICKINT_Msk   |
-                    SysTick_CTRL_ENABLE_Msk;
     initialise_monitor_handles();
-    uint32_t timeCnt1 = SysTick->VAL;
+    SysTick_Config(TIMER_TICKS);
+    SysTick->VAL = 0;
     int resultCode = test_main();
-    uint32_t timeCnt2 = SysTick->VAL;
-    printf("Cycles count: %ld\n", (timeCnt1 - timeCnt2));
+    printf("Cycles count: %ld\n", elapsedSysTicks());
     exit(resultCode);
 }
 
@@ -46,5 +58,8 @@ void SecureFault_Handler(void) {
 }
 
 void SysTick_Handler() {
-    //todo long long timer bitness
+    __disable_irq();
+    tickLoopCount++;
+    __enable_irq();
 }
+

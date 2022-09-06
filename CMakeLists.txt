@@ -73,3 +73,9 @@ add_qemu_test(fir_test
         $<TARGET_PROPERTY:CMSIS_DSP_FIR_F32,SOURCES>
         )
 target_link_libraries(fir_test CMSIS_DSP_FIR_F32)
+
+######################################
+#  Stack overflow test               #
+######################################
+add_qemu_test(stack_corrupted_test test/stack_corrupted_test.c)
+target_compile_options(stack_corrupted_test PRIVATE -fstack-protector-all)
