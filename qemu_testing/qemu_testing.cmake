@@ -35,7 +35,7 @@ function(add_qemu_test name )
             -Wl,-gc-sections,--print-memory-usage,-Map=${PROJECT_BINARY_DIR}/${name}.map
     )
     add_test(NAME ${name}
-            COMMAND ${QEMU_BIN_FOR_TEST} -machine mps2-an500 -nographic --semihosting-config enable=on,target=native -icount shift=auto -kernel $<TARGET_FILE:${name}>)
+            COMMAND ${QEMU_BIN_FOR_TEST} -machine musca-b1 -nographic --semihosting-config enable=on,target=native -icount shift=auto -kernel $<TARGET_FILE:${name}>)
 endfunction()
 
 
